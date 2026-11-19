@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diritto, capriccio o dovere?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFF8EA; --card:#FFFFFF; --ink:#23324A; --muted:#5B6A82; --line:#E6DCC6;
+  --diritto:#1F6FD1; --diritto-bg:#E4EFFC;
+  --capriccio:#D9642B; --capriccio-bg:#FCE9DD;
+  --dovere:#2B8A5A; --dovere-bg:#DFF3E8;
+  --ok:#2B8A5A; --ko:#C23B3B;
+  --display:"Baloo 2","Trebuchet MS",system-ui,sans-serif;
+  --body:"Nunito","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#16202F; --card:#1F2C40; --ink:#F2EEE2; --muted:#AEB9CB; --line:#34445E;
+    --diritto:#6CA8F2; --diritto-bg:#1F3558;
+    --capriccio:#F0905A; --capriccio-bg:#4A2D1E;
+    --dovere:#62C592; --dovere-bg:#1D4030;
+    --ok:#62C592; --ko:#F28484;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16202F; --card:#1F2C40; --ink:#F2EEE2; --muted:#AEB9CB; --line:#34445E;
+  --diritto:#6CA8F2; --diritto-bg:#1F3558;
+  --capriccio:#F0905A; --capriccio-bg:#4A2D1E;
+  --dovere:#62C592; --dovere-bg:#1D4030;
+  --ok:#62C592; --ko:#F28484;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:18px;line-height:1.55;min-height:100%}
+.wrap{max-width:760px;margin:0 auto;padding:20px 16px 48px}
+h1,h2,h3{font-family:var(--display);line-height:1.15;text-wrap:balance;margin:0}
+h1{font-size:2.3rem;font-weight:800}
+.tag{display:inline-block;font-family:var(--display);font-weight:800;padding:0 .35em;border-radius:8px}
+.t-d{background:var(--diritto-bg);color:var(--diritto)}
+.t-c{background:var(--capriccio-bg);color:var(--capriccio)}
+.t-v{background:var(--dovere-bg);color:var(--dovere)}
+.card{background:var(--card);border:2px solid var(--line);border-radius:20px;padding:22px}
+.btn{font:inherit;font-family:var(--display);font-weight:800;font-size:1.15rem;border:0;border-radius:14px;padding:14px 22px;cursor:pointer;background:var(--ink);color:var(--bg)}
+.btn:focus-visible,.opt:focus-visible{outline:4px solid var(--diritto);outline-offset:3px}
+.btn:hover{filter:brightness(1.1)}
+.intro p{margin:.8em 0}
+.legend{display:grid;gap:10px;margin:18px 0 22px}
+.legend div{padding:12px 14px;border-radius:14px;font-size:1rem}
+.legend .l-d{background:var(--diritto-bg)}
+.legend .l-c{background:var(--capriccio-bg)}
+.legend .l-v{background:var(--dovere-bg)}
+.legend b{font-family:var(--display);font-size:1.15rem}
+.hud{display:flex;justify-content:space-between;align-items:center;gap:12px;font-weight:800;margin-bottom:10px;font-size:1rem}
+.bar{height:12px;border-radius:99px;background:var(--line);overflow:hidden;margin-bottom:18px}
+.bar i{display:block;height:100%;width:0;background:var(--dovere);transition:width .3s}
+.statement{font-family:var(--display);font-weight:800;font-size:1.7rem;line-height:1.25;text-wrap:balance;margin:6px 0 20px}
+.q-label{color:var(--muted);font-size:1rem;font-weight:600}
+.opts{display:grid;gap:12px;grid-template-columns:repeat(3,1fr)}
+.opt{font:inherit;font-family:var(--display);font-weight:800;font-size:1.3rem;border:3px solid transparent;border-radius:16px;padding:18px 8px;cursor:pointer;color:var(--ink);min-height:84px}
+.opt small{display:block;font-family:var(--body);font-weight:600;font-size:.85rem;opacity:.85}
+.opt.d{background:var(--diritto-bg);color:var(--diritto)}
+.opt.c{background:var(--capriccio-bg);color:var(--capriccio)}
+.opt.v{background:var(--dovere-bg);color:var(--dovere)}
+.opt:not(:disabled):hover{border-color:currentColor}
+.opt:disabled{cursor:default}
+.opt.dim{opacity:.45}
+.opt.right{border-color:var(--ok);box-shadow:0 0 0 3px var(--ok)}
+.opt.wrong{border-color:var(--ko);border-style:dashed}
+.feedback{margin-top:22px;border-top:2px dashed var(--line);padding-top:18px}
+.verdict{font-family:var(--display);font-weight:800;font-size:1.5rem;margin:0 0 8px}
+.verdict.ok{color:var(--ok)}
+.verdict.ko{color:var(--ko)}
+.box{border-radius:14px;padding:12px 14px;margin:12px 0;font-size:1rem}
+.box h3{font-size:1.05rem;margin-bottom:4px}
+.box.d{background:var(--diritto-bg)}
+.box.c{background:var(--capriccio-bg)}
+.box.v{background:var(--dovere-bg)}
+.box.plain{background:var(--bg);border:2px solid var(--line)}
+.next{margin-top:14px;display:flex;justify-content:flex-end}
+.result{text-align:center}
+.score-big{font-family:var(--display);font-weight:800;font-size:4rem;line-height:1;margin:8px 0}
+.stars{font-size:2rem;letter-spacing:.2em}
+.review{text-align:left;margin-top:22px}
+.review ul{padding-left:0;list-style:none;margin:10px 0 0;display:grid;gap:8px}
+.review li{background:var(--bg);border:2px solid var(--line);border-radius:12px;padding:10px 12px;font-size:1rem}
+.review li b{display:block}
+.footer{margin-top:26px;color:var(--muted);font-size:.9rem}
+@media (max-width:560px){
+  h1{font-size:1.8rem}
+  .opts{grid-template-columns:1fr}
+  .opt{min-height:64px}
+  .statement{font-size:1.4rem}
+}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <section id="start" class="card intro">
+    <h1><span class="tag t-d">Diritto</span>, <span class="tag t-c">capriccio</span> o <span class="tag t-v">dovere</span>?</h1>
+    <p>Leggi la frase e scegli la scatola giusta. Dopo ogni risposta scoprirai il perché. In tutto ci sono 45 frasi: alla fine vedi il tuo punteggio.</p>
+    <div class="legend">
+      <div class="l-d"><b>Diritto</b>: qualcosa che serve a ogni bambino per vivere e crescere bene, ed è scritto nella Convenzione ONU sui diritti dell'infanzia.</div>
+      <div class="l-c"><b>Capriccio</b>: qualcosa che ci piace e che desideriamo, ma di cui non abbiamo bisogno per stare bene.</div>
+      <div class="l-v"><b>Dovere</b>: qualcosa che faccio io per rispettare gli altri e per far valere i diritti di tutti.</div>
+    </div>
+    <button class="btn" id="go" type="button">Comincia il gioco</button>
+    <p class="footer">Giornata dei diritti dell'infanzia, 20 novembre.</p>
+  </section>
+
+  <section id="game" class="card" hidden>
+    <div class="hud"><span id="count">Frase 1 di 45</span><span id="score">Punti: 0</span></div>
+    <div class="bar" aria-hidden="true"><i id="fill"></i></div>
+    <div class="q-label">Questa frase è un&hellip;</div>
+    <p class="statement" id="statement" aria-live="polite"></p>
+    <div class="opts" id="opts">
+      <button class="opt d" type="button" data-k="d">Diritto<small>mi serve per crescere</small></button>
+      <button class="opt c" type="button" data-k="c">Capriccio<small>lo desidero</small></button>
+      <button class="opt v" type="button" data-k="v">Dovere<small>lo faccio io</small></button>
+    </div>
+    <div class="feedback" id="feedback" hidden aria-live="polite"></div>
+  </section>
+
+  <section id="end" class="card result" hidden>
+    <h2 id="end-title">Bravissimo!</h2>
+    <div class="stars" id="stars" aria-hidden="true"></div>
+    <div class="score-big" id="end-score"></div>
+    <p id="end-msg"></p>
+    <button class="btn" id="again" type="button">Gioca ancora</button>
+    <div class="review" id="review"></div>
+  </section>
+</main>
+
+<script>
+var COUNTRIES = "196 Stati nel mondo hanno ratificato la Convenzione, cioè hanno promesso di rispettarla: sono tutti i paesi dell'ONU tranne gli Stati Uniti. L'Italia l'ha ratificata nel 1991. Promettere non basta: in alcuni posti questo diritto non è ancora rispettato per tutti i bambini, e per questo bisogna continuare a difenderlo.";
+var CAP_NOTE = "Desiderare cose belle non è sbagliato! Ma un capriccio non è un diritto: se non lo abbiamo, stiamo bene lo stesso, e nessuna legge obbliga gli adulti a darcelo.";
+
+var D = [
+["Andare a scuola e imparare a leggere e scrivere","art. 28","Per crescere bene e costruirsi un futuro, ogni bambino ha bisogno di imparare. La scuola elementare deve essere gratuita e aperta a tutti."],
+["Giocare e riposare dopo la scuola","art. 31","Giocare e riposarsi non è tempo perso: serve per stare bene, imparare e crescere. Per questo la Convenzione lo protegge."],
+["Essere curato da un medico quando sto male","art. 24","Stare in salute è necessario per vivere. Ogni bambino deve poter avere cure, medicine e un dottore quando ne ha bisogno."],
+["Avere acqua pulita da bere","art. 24","L'acqua sporca fa ammalare. Per questo gli Stati devono fare in modo che ogni bambino abbia acqua potabile e cibo sano."],
+["Avere cibo a sufficienza, una casa e dei vestiti","art. 27","Sono le cose di base per crescere. Gli adulti devono provvedere, e gli Stati aiutano le famiglie che non ce la fanno."],
+["Avere un nome e una nazionalità fin dalla nascita","art. 7","Il nome ci riconosce come persone con una storia e dei diritti. Ogni bambino va registrato appena nasce."],
+["Essere ascoltato quando si decide qualcosa che mi riguarda","art. 12","I bambini hanno idee e sentimenti importanti. Gli adulti devono ascoltarli e tenerne conto, in famiglia, a scuola e nelle decisioni che li riguardano."],
+["Essere trattato come gli altri, qualunque sia il colore della mia pelle","art. 2","Tutti i bambini hanno gli stessi diritti, ovunque vivano, qualunque lingua parlino o religione abbiano, che siano maschi o femmine, ricchi o poveri, con o senza disabilità."],
+["Essere protetto se qualcuno mi fa del male","art. 19","Nessun bambino deve subire violenza, né in famiglia né a scuola né altrove. Gli adulti e lo Stato devono proteggerlo."],
+["Dire quello che penso ed esprimere le mie idee","art. 13","Ogni bambino può parlare, disegnare, scrivere e raccontare le sue idee, rispettando gli altri."],
+["Pensare con la mia testa e avere le mie convinzioni, anche religiose","art. 14","Ogni bambino può farsi le proprie idee e credere in ciò che sente, con la guida dei genitori. Per questo nessuno dovrebbe prenderlo in giro."],
+["Avere la mia vita privata rispettata","art. 16","Anche i bambini hanno una vita privata: la loro famiglia, la loro casa, i loro messaggi. Nessuno può intromettersi senza un buon motivo né rovinare la loro reputazione."],
+["Ricevere informazioni vere e adatte alla mia età","art. 17","Libri, tv e internet ci aiutano a capire il mondo. Ai bambini devono arrivare informazioni vere e adatte a loro, e protezione da ciò che può fargli male."],
+["Avere aiuto per vivere bene e andare a scuola se ho una disabilità","art. 23","Un bambino con una disabilità ha diritto a cure, aiuti e a un'educazione adatta per vivere una vita piena e stare insieme agli altri."],
+["Parlare la mia lingua e vivere la mia cultura","art. 30","Ogni bambino, anche se fa parte di una minoranza o di un popolo indigeno, può usare la propria lingua e vivere la propria cultura insieme alla sua comunità."],
+["Non dover fare lavori pericolosi o che mi impediscono di studiare","art. 32","I bambini devono essere protetti dallo sfruttamento: il loro tempo è per studiare, giocare e crescere, non per lavorare."],
+["Vivere con i miei genitori, a meno che non sia pericoloso per me","art. 9","Un bambino ha diritto a stare con la sua famiglia. Si separa da lei solo se serve a proteggerlo, e anche allora può mantenere i rapporti con i genitori."],
+["Essere protetto e aiutato se devo scappare da una guerra","art. 22","I bambini rifugiati hanno diritto a protezione e aiuto, e se sono soli devono essere aiutati a ritrovare la famiglia."],
+["Fare musica, disegno, teatro o sport","art. 31","La Convenzione protegge anche il diritto di partecipare alla vita culturale e artistica e di svagarsi. Musica, sport e creatività fanno bene a tutti."],
+["Incontrare gli amici e far parte di un gruppo","art. 15","I bambini hanno il diritto di stare insieme, di formare gruppi e di ritrovarsi in pace con altri bambini."]
+];
+
+var V = [
+["Rispettare i compagni e le maestre","Costituzione italiana, art. 2 (doveri di solidarietà)","Il rispetto è il dovere che protegge il diritto di tutti a stare bene a scuola. Se io rispetto gli altri, anche gli altri rispettano me."],
+["Impegnarmi a scuola","Costituzione italiana, art. 34 (istruzione obbligatoria e gratuita)","Andare a scuola è un diritto, ma impegnarsi è un dovere: la scuola ci dà un'occasione e il nostro impegno la trasforma in un futuro."],
+["Ascoltare gli altri quando parlano","Convenzione ONU, art. 12 e Costituzione, art. 2","Se tutti hanno il diritto di essere ascoltati, tutti hanno anche il dovere di ascoltare. Ascoltare è un modo di rispettare."],
+["Non escludere nessuno dal gioco","Convenzione ONU, art. 2 (non discriminazione)","Tutti i bambini hanno gli stessi diritti. Il mio dovere è non lasciare fuori nessuno per come è, per la lingua che parla o per come si veste."],
+["Non buttare i rifiuti per terra e avere cura dell'ambiente","Convenzione ONU, art. 29 (rispetto dell'ambiente)","L'ambiente è di tutti, anche dei bambini che verranno. Averne cura protegge il diritto di vivere in un posto sano."],
+["Aiutare un compagno che è in difficoltà","Costituzione italiana, art. 2 (solidarietà)","La solidarietà è un dovere che la Costituzione chiede a tutti: aiutarsi rende più forti i diritti di ognuno."],
+["Rispettare le regole della classe e dei giochi","Costituzione italiana, art. 2","Le regole servono perché i diritti di tutti possano stare insieme: il mio diritto di giocare finisce dove inizia quello degli altri."],
+["Fare i compiti","Costituzione, art. 34 e Convenzione ONU, art. 29","I compiti sono parte dell'impegno per imparare. Il diritto allo studio vale davvero quando faccio anche la mia parte."],
+["Avere cura dei libri, dei banchi e dei giochi di tutti","Costituzione italiana, art. 2","Le cose comuni appartengono a tutti: se le rompo, gli altri non possono usarle. Averne cura protegge il diritto di tutti a una scuola che funziona."],
+["Dire la verità e chiedere scusa quando sbaglio","Costituzione italiana, art. 2","Onestà e responsabilità tengono insieme la fiducia tra le persone. Chiedere scusa ripara il male fatto e rispetta chi ho ferito."],
+["Rispettare chi è diverso da me per lingua, cultura o religione","Convenzione ONU, art. 29","L'educazione deve insegnare il rispetto per le altre culture. Il rispetto è il dovere che rende vero il diritto di tutti a non essere discriminati."],
+["Aspettare il mio turno per parlare","Convenzione ONU, art. 12","Perché ognuno possa dire la sua, bisogna parlare uno alla volta. È il dovere che rende vero il diritto di essere ascoltati."],
+["Andare a scuola anche quando ho poca voglia","Costituzione italiana, art. 34","In Italia l'istruzione è obbligatoria e gratuita: andare a scuola è un diritto e anche un obbligo. Anche quando non ho voglia, fa parte dei miei doveri."]
+];
+
+var C = [
+["Avere l'ultimo smartphone di moda","È un desiderio, non un bisogno: per vivere e crescere bene non serve. Nessun articolo dice che ogni bambino debba avere un telefono nuovo."],
+["Mangiare solo caramelle e patatine","Il diritto è avere cibo sufficiente e sano, non solo quello che piace di più. Mangiare solo dolci fa male: è un capriccio."],
+["Avere subito il giocattolo nuovo che ha il mio amico","Desiderare è normale, ma avere sempre tutto subito non è un diritto. Il diritto è giocare, non possedere ogni giocattolo."],
+["Restare alzato tutta la notte a giocare ai videogiochi","Il diritto è riposare e giocare, ma riposare vuol dire anche dormire bene. Stare svegli di notte fa male alla salute e alla scuola."],
+["Non perdere mai a nessun gioco","Perdere fa parte del gioco. Voler vincere sempre è un capriccio e rovina il divertimento di tutti."],
+["Andare in vacanza ogni mese","Il diritto è riposare e svagarsi, non andare in vacanza quando voglio. Le vacanze sono bellissime, ma non necessarie."],
+["Avere una camera piena di giocattoli","Il diritto è giocare, non avere una montagna di giocattoli. Si gioca bene anche con pochi giochi e con gli amici."],
+["Non dover mai aiutare in casa","Aiutare in casa fa parte della vita in famiglia. Pretendere di non fare mai nulla è un capriccio."],
+["Guardare la tv tutto il giorno","Divertirsi è un diritto, ma guardare lo schermo senza sosta toglie tempo a studio, gioco e sonno. È un desiderio, non un diritto."],
+["Avere sempre ragione su tutto","Il diritto è dire quello che penso, non avere sempre ragione. Ascoltare gli altri fa parte del rispetto."],
+["Pretendere che gli altri facciano sempre quello che dico io","Ognuno ha il diritto di essere ascoltato, io compreso, ma anche gli altri. Comandare sempre è un capriccio."],
+["Avere solo vestiti di marca","Il diritto è avere vestiti per proteggersi e stare bene, non vestiti di una certa marca. La marca è un desiderio."]
+];
+
+var ITEMS = [];
+D.forEach(function(x){ITEMS.push({t:x[0],k:"d",a:x[1],w:x[2]});});
+V.forEach(function(x){ITEMS.push({t:x[0],k:"v",a:x[1],w:x[2]});});
+C.forEach(function(x){ITEMS.push({t:x[0],k:"c",w:x[1]});});
+
+var NAMES = {d:"Diritto",c:"Capriccio",v:"Dovere"};
+var order, idx, score, wrong, answered;
+
+function $(id){return document.getElementById(id);}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function show(id){["start","game","end"].forEach(function(s){$(s).hidden=(s!==id);});window.scrollTo(0,0);}
+
+function start(){
+  order=shuffle(ITEMS);idx=0;score=0;wrong=[];
+  show("game");render();
+}
+function render(){
+  var it=order[idx];answered=false;
+  $("count").textContent="Frase "+(idx+1)+" di "+order.length;
+  $("score").textContent="Punti: "+score;
+  $("fill").style.width=(idx/order.length*100)+"%";
+  $("statement").textContent=it.t;
+  var b=document.querySelectorAll(".opt");
+  for(var i=0;i<b.length;i++){b[i].disabled=false;b[i].className="opt "+b[i].dataset.k;}
+  $("feedback").hidden=true;$("feedback").innerHTML="";
+}
+function esc(s){return s.replace(/[&<>]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;"}[c];});}
+
+function choose(k){
+  if(answered)return;answered=true;
+  var it=order[idx];var ok=(k===it.k);
+  if(ok)score++;else wrong.push(it);
+  $("score").textContent="Punti: "+score;
+  var b=document.querySelectorAll(".opt");
+  for(var i=0;i<b.length;i++){
+    b[i].disabled=true;
+    var bk=b[i].dataset.k;
+    if(bk===it.k)b[i].className+=" right";
+    else if(bk===k)b[i].className+=" wrong";
+    else b[i].className+=" dim";
+  }
+  var h='<p class="verdict '+(ok?'ok':'ko')+'">'+(ok?'Esatto! ':'Non proprio. ')+'È un '+NAMES[it.k].toLowerCase()+'.</p>';
+  if(it.k==="d"){
+    h+='<div class="box d"><h3>Perché è un diritto</h3>'+esc(it.w)+'</div>';
+    h+='<div class="box plain"><h3>Dove lo trovi</h3>Convenzione ONU sui diritti dell\'infanzia, '+esc(it.a)+'.</div>';
+    h+='<div class="box plain"><h3>Quanti paesi lo rispettano?</h3>'+esc(COUNTRIES)+'</div>';
+  }else if(it.k==="c"){
+    h+='<div class="box c"><h3>Perché è un capriccio</h3>'+esc(it.w)+'</div>';
+    h+='<div class="box plain">'+esc(CAP_NOTE)+'</div>';
+  }else{
+    h+='<div class="box v"><h3>Perché è un dovere</h3>'+esc(it.w)+'</div>';
+    h+='<div class="box plain"><h3>Dove lo trovi</h3>'+esc(it.a)+'.</div>';
+  }
+  var last=(idx===order.length-1);
+  h+='<div class="next"><button class="btn" id="next" type="button">'+(last?'Vedi il punteggio':'Avanti')+'</button></div>';
+  var f=$("feedback");f.innerHTML=h;f.hidden=false;
+  var n=$("next");n.addEventListener("click",next);n.focus({preventScroll:true});
+  f.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+function next(){
+  idx++;
+  if(idx>=order.length)finish();else{render();window.scrollTo(0,0);}
+}
+function finish(){
+  var n=order.length,p=score/n,title,msg;
+  if(p>=0.9){title="Esperto dei diritti!";msg="Conosci benissimo la differenza tra ciò che ci spetta, ciò che desideriamo e ciò che dobbiamo fare per gli altri.";}
+  else if(p>=0.7){title="Bravissimo!";msg="Hai capito bene i diritti e i doveri. Guarda gli errori qui sotto per fare ancora meglio.";}
+  else if(p>=0.5){title="Buon inizio!";msg="Stai imparando. Rileggi le spiegazioni degli errori e riprova: i diritti si custodiscono conoscendoli.";}
+  else{title="Continua ad allenarti!";msg="Non è facile distinguere un diritto da un capriccio. Leggi le spiegazioni e rigioca: migliorerai.";}
+  $("end-title").textContent=title;
+  $("end-score").textContent=score+" / "+n;
+  $("end-msg").textContent=msg;
+  var s=p>=0.9?3:p>=0.7?2:p>=0.5?1:0;
+  $("stars").textContent=s?new Array(s+1).join("★"):"";
+  var r=$("review");
+  if(wrong.length){
+    var h='<h3>Da ripassare ('+wrong.length+')</h3><ul>';
+    wrong.forEach(function(it){h+='<li><b>'+esc(it.t)+'</b>È un '+NAMES[it.k].toLowerCase()+'. '+esc(it.w)+'</li>';});
+    r.innerHTML=h+'</ul>';
+  }else r.innerHTML='<h3>Nessun errore!</h3>';
+  $("fill").style.width="100%";
+  show("end");
+}
+
+$("go").addEventListener("click",start);
+$("again").addEventListener("click",start);
+var ob=document.querySelectorAll(".opt");
+for(var i=0;i<ob.length;i++){(function(b){b.addEventListener("click",function(){choose(b.dataset.k);});})(ob[i]);}
+</script>
+</body>
+</html>
